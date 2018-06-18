@@ -272,7 +272,7 @@ func (c *Controller) Watch() {
 }
 
 func (c *Controller) watchNodes() {
-	watchlist := cache.NewListWatchFromClient(c.clientset.Core().RESTClient(), "nodes", c.namespace,
+	watchlist := cache.NewListWatchFromClient(c.clientset.Core().RESTClient(), "nodes", "",
 		fields.Everything())
 	_, controller := cache.NewInformer(
 		watchlist,
