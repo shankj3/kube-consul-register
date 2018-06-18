@@ -446,14 +446,20 @@ func (c *Controller) eventAddFunc(obj interface{}) error {
 		if len(obj.(*v1.Service).Spec.ExternalIPs) > 0 {
 			nodesIPs = obj.(*v1.Service).Spec.ExternalIPs
 		} else {
-			return nil
+			if !c.cfg.Controller.UseK8sServiceName {
+				return nil
+			}
+			if len(obj.(*v1.Service).Spec.ClusterIP) == 0 {
+				return nil
+			}
+			glog.Infof("Registering service with ClusterIP")
+			nodesIPs = []string{obj.(*v1.Service).Spec.ClusterIP}
 		}
 		for _, port := range obj.(*v1.Service).Spec.Ports {
 			if port.Protocol == v1.ProtocolTCP {
-				ports = append(ports, port.port)
+				ports = append(ports, port.Port)
 			}
 		}
-
 		// Now is time to add service to Consul
 		for _, nodeAddress := range nodesIPs {
 			for _, port := range ports {

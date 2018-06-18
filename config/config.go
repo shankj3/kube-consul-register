@@ -48,6 +48,8 @@ type ControllerConfig struct {
 	K8sTag                   string
 	RegisterMode             RegisterMode
 	RegisterSource           string
+	//
+	UseK8sServiceName        bool
 }
 
 var config = &Config{}
@@ -167,7 +169,9 @@ func (c *Config) fillConfig(data map[string]string) (*Config, error) {
 	} else {
 		c.Controller.RegisterMode = RegisterSingleMode
 	}
-
+	if value, ok := data["service_use_k8s_service_name"]; ok && value != "" {
+		c.Controller.UseK8sServiceName = true
+	}
 	if value, ok := data["register_source"]; ok && value != "" {
 		c.Controller.RegisterSource = value
 	} else {
