@@ -446,14 +446,14 @@ func (c *Controller) eventAddFunc(obj interface{}) error {
 		if len(obj.(*v1.Service).Spec.ExternalIPs) > 0 {
 			nodesIPs = obj.(*v1.Service).Spec.ExternalIPs
 		} else {
-			if !c.cfg.Controller.UseK8sServiceName {
+			if !c.cfg.Controller.RegisterClusterIP {
 				return nil
 			}
 			if len(obj.(*v1.Service).Spec.ClusterIP) == 0 {
 				return nil
 			}
 			glog.Infof("Registering service with ClusterIP")
-			nodesIPs = []string{obj.(*v1.Service).Spec.ClusterIP}
+			nodesIPs = []string{obj.(*v1.Service).Name}
 		}
 		for _, port := range obj.(*v1.Service).Spec.Ports {
 			if port.Protocol == v1.ProtocolTCP {
